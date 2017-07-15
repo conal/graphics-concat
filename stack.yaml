@@ -1,0 +1,13 @@
+resolver: lts-8.22
+
+packages:
+- .
+- ../concat/classes
+- ../concat/plugin
+- ../concat/examples
+
+extra-deps:
+- z3-4.1.0
+
+# Which concat packages do I really need?
+# Trim after moving GLSL generation from concat-examples to this project.
