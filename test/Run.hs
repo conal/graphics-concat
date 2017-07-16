@@ -29,7 +29,7 @@
 
 module Main where
 
-import Control.Applicative (liftA2)
+import Control.Applicative (liftA2,liftA3)
 import GHC.Float (int2Double)   -- TEMP
 
 import ConCat.Misc ((:*),R,sqr,magSqr,Unop,Binop,inNew,inNew2)
@@ -59,29 +59,20 @@ main = sequence_
   -- , genHtml "diag-disk-turning-sizing" $ ccc $
   --     \ t -> disk' (cos t) `xorR` rotate t xyPos
 
-  -- , genHtml "foo" $ ccc $ const (disk 1)
-
-  -- , genHtml "slide0" $ ccc $ const slide0
-
-  -- , genHtml "slide1" $ ccc $ slide1
-
-  -- , genHtml "orbits1" $ ccc $ orbits1
-
-  -- , genHtml "foo" $ ccc $
-  --     \ t -> uscale ((sin t + 2) / 10) udisk
-
-  -- , genHtml "checker-orbits1" $ ccc $ liftA2 xorR (const (uscale (1/3) checker)) orbits1
-
+  , genHtml "orbits1" $ ccc $ orbits1
+  , genHtml "checker-orbits1" $ ccc $
+      liftA2 xorR (const (uscale (1/3) checker)) orbits1
   , genHtml "checker-orbits2" $ ccc $
       \ t -> uscale (sin t + 1.05) checker `xorR` orbits1 t
-
-  -- , runCirc "foo" $ ccc $ (uniform scale 2 :: Filter Bool)
-
-  -- , runCirc "bar" $ ccc $ \ () -> 1/2 :: R
-
-  -- , runCirc "bar" $ ccc $ uscale 2 xPos
-
-  -- , runCirc "bar" $ ccc $ scale @Bool
+  , genHtml "checker-orbits3" $ ccc $
+      \ t -> cond (orbits1 t) (uscale (1/3) checker) (const False)
+  , genHtml "checker-orbits4" $ ccc $
+      \ t -> cond (orbits1 t) (translate (t/10,0) $ uscale (1/3) checker) (const False)
+  , genHtml "checker-orbits5" $ ccc $
+          \ t -> cond (orbits1 t) (rotate (t/10) $ uscale (1/3) checker) (const False)
+  , genHtml "orbits2" $ ccc $ orbits2
+  , genHtml "checker-orbits6" $ ccc $
+          \ t -> cond (orbits2 t) (rotate (t/10) $ uscale (1/3) checker) (const False)
 
   ]
 
@@ -118,9 +109,15 @@ orbits1 :: R -> Region
 orbits1 z = translate (cos theta,0) d `xorR` translate (0,sin theta) d
  where
    d = disk (1/2)
-   theta = z * 5
+   theta = z * 2
 
--- orbits = liftA2 xorR slide1 (later (pi/2) slide1)
+orbits2 :: R -> Region
+orbits2 z =
+  translate (cos theta,0) (disk r1) `xorR` translate (0,sin theta) (disk r2)
+ where
+   r1 = (sin (z * 3) + 1) / 2
+   r2 = 1 - r1
+   theta = z * 2
 
 slide0 :: Region
 -- slide0 = udisk
@@ -129,3 +126,6 @@ slide0 = uniform scale 1 udisk
 
 slide1 :: R -> Region
 slide1 theta = translate (cos theta, 0) (disk (1/2))
+
+cond :: (t -> Bool) -> Binop (t -> a)
+cond = liftA3 (\ a b c -> if a then b else c)
