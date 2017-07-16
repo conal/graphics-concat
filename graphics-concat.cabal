@@ -1,14 +1,14 @@
 name:                graphics-concat
 version:             0.1.0.0
--- synopsis:
--- description:
+synopsis:            Graphics via compiling-to-categories
+description:         Graphics via compiling-to-categories
 homepage:            https://github.com/conal/graphics-concat#README.md
 license:             BSD3
 license-file:        LICENSE
 author:              Conal Elliott
 maintainer:          conal@conal.net
 copyright:           2017 Conal Elliott
-category:            category
+category:            graphics
 build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
