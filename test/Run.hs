@@ -46,33 +46,30 @@ main :: IO ()
 main = sequence_
   [ putChar '\n' -- return ()
 
+  -- , genHtml "disk-sizing"   $ ccc $ disk . cos
   -- , genHtml "wobbly-disk" $ ccc $
   --     \ t -> disk' (0.75 + 0.25 * cos t)
   -- , genHtml "diag-plus-im"  $ ccc $ \ t ((x,y) :: R2) -> x + sin t > y
-  -- , genHtml "disk-sizing"   $ ccc $ disk . cos
   -- , genHtml "diag-disk-turning" $ ccc $
   --     \ t -> udisk `intersectR` rotate t xPos
-  -- , genHtml "checker-rotate" $ ccc $ \ t -> rotate t checker
-
-  -- , genHtml "sqr-sqr-anim" $ ccc $
-  --     \ t ((x,y) :: R2) -> sqr (sqr x) > y + sin t
+  -- , genHtml "checker-rotate" $ ccc $ \ t -> rotate t checker13
   -- , genHtml "diag-disk-turning-sizing" $ ccc $
   --     \ t -> disk' (cos t) `xorR` rotate t xyPos
 
   , genHtml "orbits1" $ ccc $ orbits1
   , genHtml "checker-orbits1" $ ccc $
-      liftA2 xorR (const (uscale (1/3) checker)) orbits1
-  , genHtml "checker-orbits2" $ ccc $
-      \ t -> uscale (sin t + 1.05) checker `xorR` orbits1 t
-  , genHtml "checker-orbits3" $ ccc $
-      \ t -> cond (orbits1 t) (uscale (1/3) checker) (const False)
-  , genHtml "checker-orbits4" $ ccc $
-      \ t -> cond (orbits1 t) (translate (t/10,0) $ uscale (1/3) checker) (const False)
-  , genHtml "checker-orbits5" $ ccc $
-          \ t -> cond (orbits1 t) (rotate (t/10) $ uscale (1/3) checker) (const False)
+      liftA2 xorR (const checker13) orbits1
+  , genHtml "checker-orbits2" $ ccc $ \ t ->
+      uscale (sin t + 1.05) checker `xorR` orbits1 t
+  , genHtml "checker-orbits3" $ ccc $ \ t -> 
+      orbits1 t `intersectR` checker13
+  , genHtml "checker-orbits4" $ ccc $ \ t -> 
+      orbits1 t `intersectR` translate (t/10,0) checker13
+  , genHtml "checker-orbits5" $ ccc $ \ t -> 
+      orbits1 t `intersectR` rotate (t/10) checker13
   , genHtml "orbits2" $ ccc $ orbits2
-  , genHtml "checker-orbits6" $ ccc $
-          \ t -> cond (orbits2 t) (rotate (t/10) $ uscale (1/3) checker) (const False)
+  , genHtml "checker-orbits6" $ ccc $ \ t ->
+      orbits2 t `intersectR` rotate (t/10) checker13
 
   ]
 
@@ -129,3 +126,6 @@ slide1 theta = translate (cos theta, 0) (disk (1/2))
 
 cond :: (t -> Bool) -> Binop (t -> a)
 cond = liftA3 (\ a b c -> if a then b else c)
+
+checker13 :: Region
+checker13 = uscale (1/3) checker
