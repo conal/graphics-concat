@@ -31,9 +31,9 @@ import GHC.Float (int2Double)   -- TEMP
 
 import ConCat.Misc ((:*),R,sqr,magSqr,Binop,inNew,inNew2)
 import ConCat.Circuit (GenBuses,(:>))
+import ConCat.Graphics.GLSL (genHtml,CAnim)
 import ConCat.Graphics.Image
 import qualified ConCat.RunCircuit as RC
-import ConCat.GLSL (genHtml,CAnim)
 import ConCat.Syntactic (Syn,render)
 import ConCat.AltCat (Ok2,ccc,(:**:)(..))
 
@@ -43,18 +43,18 @@ main :: IO ()
 main = sequence_
   [ putChar '\n' -- return ()
 
-  -- , runCircGlsl "wobbly-disk" $ ccc $
-  --     \ t -> disk' (0.75 + 0.25 * cos t)
-  -- , runCircGlsl "diag-plus-im"  $ ccc $ \ t ((x,y) :: R2) -> x + sin t > y
-  , runCircGlsl "disk-sizing"   $ ccc $ disk . cos
-  -- , runCircGlsl "disk-sizing-p" $ ccc $ disk' . cos
-  -- , runCircGlsl "diag-disk-turning" $ ccc $
-  --     \ t -> udisk `intersectR` rotate t xPos
-  -- , runCircGlsl "sqr-sqr-anim" $ ccc $
-  --     \ t ((x,y) :: R2) -> sqr (sqr x) > y + sin t
-  -- , runCircGlsl "diag-disk-turning-sizing" $ ccc $
-  --     \ t -> disk' (cos t) `xorR` rotate t xyPos
-  -- , runCircGlsl "checker-rotate" $ ccc $ \ t -> rotate t checker
+  , genHtml "wobbly-disk" $ ccc $
+      \ t -> disk' (0.75 + 0.25 * cos t)
+  , genHtml "diag-plus-im"  $ ccc $ \ t ((x,y) :: R2) -> x + sin t > y
+  , genHtml "disk-sizing"   $ ccc $ disk . cos
+  , genHtml "disk-sizing-p" $ ccc $ disk' . cos
+  , genHtml "diag-disk-turning" $ ccc $
+      \ t -> udisk `intersectR` rotate t xPos
+  , genHtml "sqr-sqr-anim" $ ccc $
+      \ t ((x,y) :: R2) -> sqr (sqr x) > y + sin t
+  , genHtml "diag-disk-turning-sizing" $ ccc $
+      \ t -> disk' (cos t) `xorR` rotate t xyPos
+  , genHtml "checker-rotate" $ ccc $ \ t -> rotate t checker
 
   ]
 
@@ -75,10 +75,10 @@ runCirc nm circ = RC.run nm [] circ
 runSynCirc :: GO a b => String -> EC a b -> IO ()
 runSynCirc nm (syn :**: circ) = runSyn syn >> runCirc nm circ
 
-runCircGlsl :: String -> CAnim -> IO ()
-runCircGlsl nm circ = runCirc nm circ >> genHtml nm circ
+runCircHtml :: String -> CAnim -> IO ()
+runCircHtml nm circ = runCirc nm circ >> genHtml nm circ
 
--- TODO: Fix runCircGlsl to construct the graph once instead of twice.
+-- TODO: Fix runCircHtml to construct the graph once instead of twice.
 
 {--------------------------------------------------------------------
     Misc

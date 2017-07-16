@@ -15,8 +15,10 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     ConCat.Graphics.Image
+  exposed-modules:     ConCat.Graphics.GLSL
+                       ConCat.Graphics.Image
   build-depends:       base >= 4.7 && < 5
+                     , containers, directory, parsec, prettyclass, language-glsl
                      , NumInstances
                      , concat-classes
                      , concat-examples
