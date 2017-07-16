@@ -6,8 +6,12 @@ packages:
 - ../concat/plugin
 - ../concat/examples
 
+# Pending merge of https://github.com/noteed/language-glsl/pull/16
+- location:
+    git: https://github.com/conal/language-glsl
+    commit: 9bb93fc0074ad82f9b4ddf7d03fe23bcd00772a6
+  extra-dep: true
+
+# Because concat/examples needs it (for now)
 extra-deps:
 - z3-4.1.0
-
-# Which concat packages do I really need?
-# Trim after moving GLSL generation from concat-examples to this project.
