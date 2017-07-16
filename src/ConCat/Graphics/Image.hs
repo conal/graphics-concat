@@ -75,6 +75,12 @@ xorR        = liftA2 (/=)
 
 r `diffR` r' = r `intersectR` complementR r'
 
+nothing :: a -> Bool
+nothing = const False
+
+everything :: a -> Bool
+everything = const True
+
 -- | Half plane
 xPos :: Region
 xPos (x,_y) =  x > 0
