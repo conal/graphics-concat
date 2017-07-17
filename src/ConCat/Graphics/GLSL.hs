@@ -13,14 +13,14 @@
 
 -- | Generate GLSL code from a circuit graph
 
-module ConCat.Graphics.GLSL (Anim,CAnim,genHtml) where
+module ConCat.Graphics.GLSL (Anim,CAnim,genHtml,runHtml) where
 
 import Data.List (sort)
 import qualified Data.Map as M
 import Text.Printf (printf)
 import System.Directory (createDirectoryIfMissing)
 import qualified System.Info as SI
--- import Debug.Trace (trace)
+-- import qualified Debug.Trace as T
 
 import Text.ParserCombinators.Parsec (runParser,ParseError)
 import Text.PrettyPrint.HughesPJClass -- (Pretty,prettyShow)
@@ -40,9 +40,6 @@ type Image = R :* R -> Bool     -- TODO: color etc
 
 type  Anim = R -> Image
 type CAnim = R :> Image
-
-glsl :: CAnim -> String
-glsl = prettyShow . fromComps . sort . mkGraph . A.uncurry
 
 -- genGlsl :: String -> CAnim -> IO ()
 -- genGlsl name anim =
@@ -69,16 +66,33 @@ animHtml anim = unlines $
 genHtml :: String -> CAnim -> IO ()
 genHtml name anim =
   do createDirectoryIfMissing False outDir
-     writeFile outFile (animHtml anim)
-     putStrLn ("Wrote " ++ outFile)
-     systemSuccess $ printf "%s %s" open outFile
- where
-   outDir = "out/shaders"
-   outFile = outDir++"/"++name++".html"
-   open = case SI.os of
-            "darwin" -> "open"
-            "linux"  -> "display" -- was "xdg-open"
-            _        -> error "unknown open for OS"
+     let o = outFile name
+     writeFile o (animHtml anim)
+     putStrLn ("Wrote " ++ o)
+
+runHtml :: String -> CAnim -> IO ()
+runHtml name anim =
+  do genHtml name anim
+     systemSuccess $ printf "%s %s" open (outFile name)
+
+outDir :: String
+outDir = "out/shaders"
+
+outFile :: String -> String
+outFile name = outDir++"/"++name++".html"
+
+open :: String
+open = case SI.os of
+         "darwin" -> "open"
+         "linux"  -> "display" -- was "xdg-open"
+         _        -> error "unknown open for OS"
+
+-- TODO: open is also defined in Circuit. Get it from there, or move elsewhere.
+-- Move the createDirectoryIfMissing logic there as well.
+-- Also the writeFile and putStrLn.
+
+glsl :: CAnim -> String
+glsl = prettyShow . fromComps . sort . mkGraph {- . T.traceShowId -} . A.uncurry {- . T.traceShowId -}
 
 constExpr :: C.Ty -> String -> Expr
 constExpr C.Bool   = BoolConstant        . read
