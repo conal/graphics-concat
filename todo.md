@@ -10,3 +10,5 @@
     I don't know much about them, but maybe you do.
 *   For 3D in Shady and Vertigo, I used uniform triangle meshes.
     I'd love to use geometry shaders instead, as they seem much more in the spirit of continuous procedural graphics and maybe could be made adaptive to lighting, curvature, etc.
+*   Performance improvement:
+    *   Use vector/SIMD operations.
