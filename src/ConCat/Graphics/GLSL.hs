@@ -32,7 +32,7 @@ import Language.GLSL.Parser hiding (parse)
 -- import Data.Text (Text)
 
 import ConCat.Misc ((:*),R)
-import qualified ConCat.Category as C
+import qualified ConCat.AltCat as A
 import ConCat.Circuit (Comp(..),Bus(..),busTy,(:>),mkGraph,pattern CompS,systemSuccess)
 import qualified ConCat.Circuit as C
 
@@ -42,7 +42,7 @@ type  Anim = R -> Image
 type CAnim = R :> Image
 
 glsl :: CAnim -> String
-glsl = prettyShow . fromComps . sort . mkGraph . C.uncurry
+glsl = prettyShow . fromComps . sort . mkGraph . A.uncurry
 
 -- genGlsl :: String -> CAnim -> IO ()
 -- genGlsl name anim =
