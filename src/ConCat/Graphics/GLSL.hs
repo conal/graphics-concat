@@ -42,7 +42,7 @@ type  Anim = R -> Image
 type CAnim = R :> Image
 
 glsl :: CAnim -> String
-glsl = prettyShow . fromComps "effect" . sort . mkGraph . C.uncurry
+glsl = prettyShow . fromComps . sort . mkGraph . C.uncurry
 
 -- genGlsl :: String -> CAnim -> IO ()
 -- genGlsl name anim =
@@ -87,15 +87,15 @@ constExpr C.Float  = FloatConstant       . read
 constExpr C.Double = FloatConstant       . read
 constExpr ty = error ("ConCat.GLSL.constExpr: unexpected literal type: " ++ show ty)
 
-fromComps :: String -> [Comp] -> ExternalDeclaration
--- fromComps _ comps | trace ("fromComps " ++ show comps) False = undefined
-fromComps name comps
+fromComps :: [Comp] -> ExternalDeclaration
+-- fromComps comps | trace ("fromComps " ++ show comps) False = undefined
+fromComps comps
   | (CompS _ "In" [] inputs,mid, CompS _ "Out" [res] _) <- splitComps comps
   , let (bindings, assignments) = accumComps (uses mid) mid
-  = funDef Bool name (paramDecl <$> inputs)
+  = funDef Bool "effect" (paramDecl <$> inputs)
            (map (uncurry initBus) assignments
             ++ [Return (Just (bindings M.! res))])
-fromComps name comps = error ("ConCat.GLSL.fromComps: unexpected subgraph comp " ++ show (name,comps))
+fromComps comps = error ("ConCat.GLSL.fromComps: unexpected subgraph comp " ++ show comps)
 
 -- Count uses of each output
 uses :: [Comp] -> M.Map Bus Int
